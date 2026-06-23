@@ -21,6 +21,13 @@ const (
 	SandboxEnvdVersionAttribute        string         = "envd-version"
 	// SandboxTypeAttribute distinguishes "sandbox" from "build" runs.
 	SandboxTypeAttribute string = "sandbox-type"
+	// SandboxStartMethodAttribute is "create" (first start from a template) or
+	// "resume" (from a stored memory snapshot; pause and snapshot are not
+	// distinguished here).
+	SandboxStartMethodAttribute string = "start-method"
+	// SandboxHasPrefetchAttribute is true when the snapshot already carries an
+	// empirical memory prefetch mapping.
+	SandboxHasPrefetchAttribute string = "has-prefetch-metadata"
 
 	TeamKind             ldcontext.Kind = "team"
 	UserKind             ldcontext.Kind = "user"
@@ -180,6 +187,11 @@ var (
 	// of distinct frames envd faults on resume. Off by default; rolled out via LD.
 	CollapseEnvdHeapFlag = NewBoolFlag("collapse-envd-heap", false)
 
+	// ResumeKernelPrefaultFlag prefaults the kernel image (from the vmlinux ELF)
+	// plus the low 1 MiB on a resume with no empirical prefetch mapping, so the
+	// first resume doesn't serially demand-fault the kernel. Off by default.
+	ResumeKernelPrefaultFlag = NewBoolFlag("resume-kernel-prefault", false)
+
 	// CollapseEnvdHeapTimeoutMsFlag bounds the pre-pause POST /collapse call, in
 	// milliseconds. Collapsing migrates envd's scattered heap pages into
 	// hugepages, which is heavier than the freeze sysfs write, so it gets a
@@ -281,6 +293,12 @@ var (
 	// MemoryPrefetchMaxCopyWorkers is the maximum number of parallel copy workers per sandbox for memory prefetching.
 	// Copy uses uffd syscalls, so we limit parallelism to avoid overwhelming the system.
 	MemoryPrefetchMaxCopyWorkers = NewIntFlag("memory-prefetch-max-copy-workers", 8)
+
+	// ResumePrefaultFloorMiB, when > 0, additionally prefaults the first N MiB of
+	// guest RAM (where the kernel keeps most of its persistent boot-time state).
+	// Diminishing returns as N grows; keep N ≤ guest RAM. 0 disables it (default).
+	ResumePrefaultFloorMiB = NewIntFlag("resume-prefault-floor-mib", 0)
+
 
 	// TCPFirewallMaxConnectionsPerSandbox is the maximum number of concurrent TCP firewall
 	// connections allowed per sandbox. Negative means no limit.

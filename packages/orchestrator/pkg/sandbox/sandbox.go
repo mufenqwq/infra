@@ -696,31 +696,74 @@ func (f *Factory) ResumeSandbox(
 
 		telemetry.ReportEvent(ctx, "got metadata")
 
-		// Start background prefetcher as early as possible if prefetch mapping exists
-		// Fetching from source starts immediately; copying waits for uffd to be ready
-		if meta.Prefetch != nil && meta.Prefetch.Memory != nil {
-			fcUffd, err := uffdPromise.Wait(ctx)
-			if err != nil {
-				return
-			}
-
-			telemetry.ReportEvent(ctx, "starting prefetcher")
-			l := logger.L().With(logger.WithSandboxID(runtime.SandboxID), logger.WithTemplateID(runtime.TemplateID), logger.WithTeamID(runtime.TeamID))
-
-			go func() {
-				p := prefetch.New(
-					l,
-					memfile,
-					fcUffd,
-					meta.Prefetch.Memory,
-					f.featureFlags,
-				)
-				err := p.Start(execCtx)
-				if err != nil {
-					l.Error(ctx, "failed to start prefetcher", zap.Error(err))
-				}
-			}()
+		// Empirical mapping from the build optimize phase (templates have it;
+		// pause/snapshot resumes do not).
+		var empirical *metadata.MemoryPrefetchMapping
+		if meta.Prefetch != nil && meta.Prefetch.Memory != nil && len(meta.Prefetch.Memory.Indices) > 0 {
+			empirical = meta.Prefetch.Memory
 		}
+
+		// Deterministic prefault, gated per team and by start method and whether
+		// an empirical mapping exists. Warms the kernel on resumes that have none.
+		method := "create"
+		if apiConfigToStore.GetSnapshot() {
+			method = "resume"
+		}
+		flagCtxs := []ldcontext.Context{
+			ldcontext.NewBuilder(runtime.SandboxID).
+				Kind(featureflags.SandboxKind).
+				SetString(featureflags.SandboxTemplateAttribute, runtime.TemplateID).
+				SetString(featureflags.SandboxKernelVersionAttribute, config.FirecrackerConfig.KernelVersion).
+				SetString(featureflags.SandboxTypeAttribute, runtime.SandboxType.String()).
+				SetString(featureflags.SandboxStartMethodAttribute, method).
+				SetBool(featureflags.SandboxHasPrefetchAttribute, empirical != nil).
+				Build(),
+			featureflags.TeamContext(runtime.TeamID),
+		}
+
+		var static *metadata.MemoryPrefetchMapping
+		kernelImage := f.featureFlags.BoolFlag(ctx, featureflags.ResumeKernelPrefaultFlag, flagCtxs...)
+		floorMiB := f.featureFlags.IntFlag(ctx, featureflags.ResumePrefaultFloorMiB, flagCtxs...)
+		if kernelImage || floorMiB > 0 {
+			blockSize := int64(header.PageSize)
+			if config.HugePages {
+				blockSize = int64(header.HugepageSize)
+			}
+			var kernelPath string
+			if kernelImage {
+				kernelPath = fc.Config{KernelVersion: config.FirecrackerConfig.KernelVersion}.HostKernelPath(f.config)
+			}
+			static = resumePrefaultMapping(kernelPath, blockSize, kernelImage, floorMiB)
+		}
+
+		mapping := mergePrefetchMappings(static, empirical)
+		if mapping == nil {
+			return
+		}
+
+		// Start background prefetcher as early as possible.
+		// Fetching from source starts immediately; copying waits for uffd to be ready.
+		fcUffd, err := uffdPromise.Wait(ctx)
+		if err != nil {
+			return
+		}
+
+		telemetry.ReportEvent(ctx, "starting prefetcher")
+		l := logger.L().With(logger.WithSandboxID(runtime.SandboxID), logger.WithTemplateID(runtime.TemplateID), logger.WithTeamID(runtime.TeamID))
+
+		go func() {
+			p := prefetch.New(
+				l,
+				memfile,
+				fcUffd,
+				mapping,
+				f.featureFlags,
+			)
+			err := p.Start(execCtx)
+			if err != nil {
+				l.Error(ctx, "failed to start prefetcher", zap.Error(err))
+			}
+		}()
 	}()
 
 	// Slot initialization
