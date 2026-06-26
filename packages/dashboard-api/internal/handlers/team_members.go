@@ -87,12 +87,35 @@ func (s *APIStore) GetTeamsTeamIDMembers(c *gin.Context, teamID api.TeamID) {
 	})
 }
 
+// rejectIfSSOManagedTeam blocks member mutations on teams whose membership is
+// managed by an SSO organization (teams.ory_organization_id is set). The team
+// is read from the already-authenticated request context, so no extra query is
+// needed. Returns true when the request was already answered with an error.
+func (s *APIStore) rejectIfSSOManagedTeam(c *gin.Context) bool {
+	teamInfo, ok := auth.GetTeamInfo(c)
+	if !ok || teamInfo == nil || teamInfo.Team == nil {
+		return false
+	}
+
+	if teamInfo.Team.OryOrganizationID != nil {
+		s.sendAPIStoreError(c, http.StatusForbidden, "This team's members are managed by SSO. Ask teammates to sign in through your SSO provider to join automatically.")
+
+		return true
+	}
+
+	return false
+}
+
 func (s *APIStore) PostTeamsTeamIDMembers(c *gin.Context, teamID api.TeamID) {
 	ctx := c.Request.Context()
 	telemetry.ReportEvent(ctx, "add team member")
 
 	authTeamID, ok := s.requireAuthedTeamMatchesPath(c, teamID)
 	if !ok {
+		return
+	}
+
+	if s.rejectIfSSOManagedTeam(c) {
 		return
 	}
 

@@ -25,6 +25,12 @@ type Provider interface {
 	GetProfilesByUserID(ctx context.Context, userIDs []uuid.UUID) (map[uuid.UUID]Profile, error)
 	FindProfilesByEmail(ctx context.Context, email string) ([]Profile, error)
 	GetTeamCreatorContext(ctx context.Context, userID uuid.UUID) (*sharedteamprovision.CreatorContextV1, error)
+	// GetIdentitySSOOrganization returns the Ory organization id the identity
+	// (by subject) belongs to, or "" when it is not part of an SSO organization.
+	GetIdentitySSOOrganization(ctx context.Context, subject string) (string, error)
+	// GetUserSSOOrganization resolves the user's Ory subject and returns the
+	// organization id from their identity, or "" when not part of an organization.
+	GetUserSSOOrganization(ctx context.Context, userID uuid.UUID) (string, error)
 	// SetIdentityExternalID stores the canonical user UUID on the external
 	// identity (Ory external_id) so the IdP can back-reference our user.
 	SetIdentityExternalID(ctx context.Context, subject string, externalID uuid.UUID) error

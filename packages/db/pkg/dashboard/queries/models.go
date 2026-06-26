@@ -21,6 +21,7 @@ type Team struct {
 	BlockedReason           *string
 	ClusterID               *uuid.UUID
 	SandboxSchedulingLabels []string
+	OryOrganizationID       *uuid.UUID
 	Slug                    string
 	ProfilePictureUrl       *string
 }

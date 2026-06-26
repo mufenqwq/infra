@@ -175,6 +175,7 @@ type Team struct {
 	BlockedReason           pgtype.Text
 	ClusterID               *uuid.UUID
 	SandboxSchedulingLabels []string
+	OryOrganizationID       *uuid.UUID
 	Slug                    string
 }
 

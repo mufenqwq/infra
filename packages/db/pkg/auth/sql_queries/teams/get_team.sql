@@ -18,6 +18,11 @@ FROM "public"."teams" t
          JOIN "public"."team_limits" tl on tl.id = t.id
 WHERE t.id = $1;
 
+-- name: GetTeamsByOryOrganizationID :many
+SELECT * FROM "public"."teams"
+WHERE ory_organization_id = sqlc.arg(ory_organization_id)::uuid
+ORDER BY created_at ASC;
+
 -- name: GetTeamsWithUsersTeamsWithTier :many
 SELECT sqlc.embed(t), ut.is_default, sqlc.embed(tl)
 FROM "public"."teams" t

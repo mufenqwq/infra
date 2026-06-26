@@ -179,6 +179,46 @@ func (p *oryProvider) GetTeamCreatorContext(ctx context.Context, userID uuid.UUI
 	return creatorContextFromOryIdentity(identities[0]), nil
 }
 
+// GetIdentitySSOOrganization returns the Ory organization_id stamped on the
+// identity when it authenticated through an organization's SSO connection, or
+// "" when the identity belongs to no organization. organization_id is a
+// first-class Ory identity field (not a trait), so it is authoritative here.
+func (p *oryProvider) GetIdentitySSOOrganization(ctx context.Context, subject string) (string, error) {
+	subject = strings.TrimSpace(subject)
+	if subject == "" {
+		return "", errors.New("ory identity subject is required")
+	}
+
+	identity, resp, err := p.identities.GetIdentityExecute(
+		p.identities.GetIdentity(p.authCtx(ctx), subject),
+	)
+	if resp != nil && resp.Body != nil {
+		_ = resp.Body.Close()
+	}
+	if err != nil {
+		return "", fmt.Errorf("ory get identity: %w", err)
+	}
+
+	return strings.TrimSpace(identity.GetOrganizationId()), nil
+}
+
+func (p *oryProvider) GetUserSSOOrganization(ctx context.Context, userID uuid.UUID) (string, error) {
+	if userID == uuid.Nil {
+		return "", nil
+	}
+
+	userIDBySubject, err := p.subjectsForUserIDs(ctx, []uuid.UUID{userID})
+	if err != nil {
+		return "", err
+	}
+
+	for subject := range userIDBySubject {
+		return p.GetIdentitySSOOrganization(ctx, subject)
+	}
+
+	return "", nil
+}
+
 func (p *oryProvider) SetIdentityExternalID(ctx context.Context, subject string, externalID uuid.UUID) error {
 	subject = strings.TrimSpace(subject)
 	if subject == "" {

@@ -207,6 +207,22 @@ func (s *APIStore) bootstrapUserWithIdentity(ctx context.Context, profile bootst
 		return provisionedTeam{}, fmt.Errorf("get default team: %w", err)
 	}
 
+	// SSO: when the Ory identity belongs to an organization, the user joins that
+	// organization's pre-provisioned team(s) instead of getting a personal team.
+	if identity != nil {
+		ssoTeam, handled, err := s.assignSSOTeams(ctx, authTxDB, profile.UserID, identity.Subject)
+		if err != nil {
+			return provisionedTeam{}, err
+		}
+		if handled {
+			if err := tx.Commit(ctx); err != nil {
+				return provisionedTeam{}, fmt.Errorf("commit sso bootstrap transaction: %w", err)
+			}
+
+			return ssoTeam, nil
+		}
+	}
+
 	team, err := authTxDB.CreateTeam(ctx, authqueries.CreateTeamParams{
 		Name:          profile.DefaultTeamName,
 		Tier:          baseTierID,
@@ -251,6 +267,94 @@ func (s *APIStore) bootstrapUserWithIdentity(ctx context.Context, profile bootst
 	}, nil
 }
 
+// assignSSOTeams enrolls an SSO identity into every team mapped to its Ory
+// organization, returning handled=false when the identity belongs to no
+// organization (the caller then provisions a personal default team). The
+// earliest-created mapped team becomes the user's default team. No billing
+// provisioning is emitted: SSO teams are provisioned out of band when the
+// enterprise is onboarded. Callers must already hold the per-user lock.
+func (s *APIStore) assignSSOTeams(ctx context.Context, authTxDB *authqueries.Queries, userID uuid.UUID, subject string) (provisionedTeam, bool, error) {
+	orgID, err := s.userProfiles.GetIdentitySSOOrganization(ctx, subject)
+	if err != nil {
+		return provisionedTeam{}, false, fmt.Errorf("resolve sso organization: %w", err)
+	}
+	orgID = strings.TrimSpace(orgID)
+	if orgID == "" {
+		return provisionedTeam{}, false, nil
+	}
+
+	orgUUID, err := uuid.Parse(orgID)
+	if err != nil {
+		return provisionedTeam{}, false, &internalteamprovision.ProvisionError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Invalid SSO organization.",
+		}
+	}
+
+	rows, err := authTxDB.GetTeamsByOryOrganizationID(ctx, orgUUID)
+	if err != nil {
+		return provisionedTeam{}, false, fmt.Errorf("get teams for sso organization: %w", err)
+	}
+
+	teams := make([]authqueries.Team, 0, len(rows))
+	for _, team := range rows {
+		if team.IsBlocked || team.IsBanned {
+			continue
+		}
+		teams = append(teams, team)
+	}
+
+	// Fail closed: the identity is bound to an organization, but no usable team
+	// maps to it yet. Silently creating a personal team would leave an
+	// ungoverned account outside the enterprise.
+	if len(teams) == 0 {
+		return provisionedTeam{}, false, &internalteamprovision.ProvisionError{
+			StatusCode: http.StatusForbidden,
+			Message:    "Your organization's SSO is not fully set up yet. Please contact support.",
+		}
+	}
+
+	for i, team := range teams {
+		if err := authTxDB.CreateTeamMembership(ctx, authqueries.CreateTeamMembershipParams{
+			UserID:    userID,
+			TeamID:    team.ID,
+			IsDefault: i == 0,
+			AddedBy:   nil,
+		}); err != nil {
+			return provisionedTeam{}, false, fmt.Errorf("create sso team membership: %w", err)
+		}
+	}
+
+	defaultTeam := teams[0]
+
+	return provisionedTeam{
+		ID:            defaultTeam.ID,
+		Name:          defaultTeam.Name,
+		Email:         defaultTeam.Email,
+		Slug:          defaultTeam.Slug,
+		IsBlocked:     defaultTeam.IsBlocked,
+		BlockedReason: defaultTeam.BlockedReason,
+	}, true, nil
+}
+
+// ensureNotSSOManaged rejects team mutations (creating a team, adding members)
+// for users whose Ory identity belongs to an SSO organization. Membership for
+// those users is driven entirely by their identity provider.
+func (s *APIStore) ensureNotSSOManaged(ctx context.Context, userID uuid.UUID) error {
+	orgID, err := s.userProfiles.GetUserSSOOrganization(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("resolve sso organization: %w", err)
+	}
+	if strings.TrimSpace(orgID) != "" {
+		return &internalteamprovision.ProvisionError{
+			StatusCode: http.StatusForbidden,
+			Message:    "SSO-managed accounts can't create teams. Contact your organization admin.",
+		}
+	}
+
+	return nil
+}
+
 // setOIDCIdentityExternalID stores the canonical public.users id on the Ory
 // identity. It is a no-op for non-OIDC bootstrap (identity == nil).
 func (s *APIStore) setOIDCIdentityExternalID(ctx context.Context, identity *bootstrapUserIdentity, userID uuid.UUID) error {
@@ -266,6 +370,10 @@ func (s *APIStore) setOIDCIdentityExternalID(ctx context.Context, identity *boot
 }
 
 func (s *APIStore) createTeam(ctx context.Context, userID uuid.UUID, name string) (provisionedTeam, error) {
+	if err := s.ensureNotSSOManaged(ctx, userID); err != nil {
+		return provisionedTeam{}, err
+	}
+
 	profile, err := s.resolveProfile(ctx, userID)
 	if err != nil {
 		return provisionedTeam{}, err

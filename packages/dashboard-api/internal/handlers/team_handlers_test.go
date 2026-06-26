@@ -409,6 +409,14 @@ func (handlerTestUserProfiles) GetTeamCreatorContext(context.Context, uuid.UUID)
 	return nil, nil
 }
 
+func (handlerTestUserProfiles) GetIdentitySSOOrganization(context.Context, string) (string, error) {
+	return "", nil
+}
+
+func (handlerTestUserProfiles) GetUserSSOOrganization(context.Context, uuid.UUID) (string, error) {
+	return "", nil
+}
+
 func (handlerTestUserProfiles) SetIdentityExternalID(context.Context, string, uuid.UUID) error {
 	return nil
 }
