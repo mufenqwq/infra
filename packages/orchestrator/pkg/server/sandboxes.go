@@ -603,11 +603,20 @@ const endReasonPause = "pause"
 // (start/resume until pause or kill) tagged with the reason the execution
 // ended. For kills this is the kill reason; for pauses it is endReasonPause.
 func (s *Server) recordExecutionDuration(ctx context.Context, sbx *sandbox.Sandbox, endReason string) {
+	startedAt := sbx.GetStartedAt()
+	if startedAt.IsZero() {
+		// A zero start time means the sandbox never finished starting (e.g. it
+		// was torn down before WaitForEnvd set startedAt). Recording
+		// time.Since(zero) would emit a massive outlier that corrupts the
+		// histogram, so skip it.
+		return
+	}
+
 	if endReason == "" {
 		endReason = killReasonUnknown
 	}
 
-	s.sandboxExecutionDuration.Record(ctx, time.Since(sbx.GetStartedAt()).Milliseconds(),
+	s.sandboxExecutionDuration.Record(ctx, time.Since(startedAt).Milliseconds(),
 		metric.WithAttributes(attribute.String("end_reason", endReason)))
 }
 
@@ -800,6 +809,14 @@ func (s *Server) Checkpoint(ctx context.Context, in *orchestrator.SandboxCheckpo
 
 		return nil, status.Errorf(codes.Internal, "error resuming sandbox after checkpoint: %s", err)
 	}
+
+	// Preserve the original execution start time across the checkpoint resume.
+	// ResumeSandbox -> WaitForEnvd resets startedAt to now, but the ExecutionID
+	// is unchanged, so this is still the same execution. Keeping the original
+	// start time means the eventual pause/kill records the full execution span
+	// in orchestrator.sandbox.execution.duration rather than only the segment
+	// after the last checkpoint.
+	resumedSbx.SetStartedAt(sbx.GetStartedAt())
 
 	// Collect prefetch data immediately after resume while it's most accurate
 	prefetchData, prefetchErr := resumedSbx.MemoryPrefetchData(ctx)

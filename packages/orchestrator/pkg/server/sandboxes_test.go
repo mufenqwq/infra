@@ -214,6 +214,10 @@ func TestRecordExecutionDuration(t *testing.T) {
 	s.recordExecutionDuration(context.Background(), newSbx(), endReasonPause)
 	s.recordExecutionDuration(context.Background(), newSbx(), "")
 
+	// A sandbox that never finished starting has a zero start time and must not
+	// emit a sample (it would be a massive time.Since(zero) outlier).
+	s.recordExecutionDuration(context.Background(), &sandbox.Sandbox{Metadata: &sandbox.Metadata{}}, "timeout")
+
 	var rm metricdata.ResourceMetrics
 	require.NoError(t, reader.Collect(context.Background(), &rm))
 
