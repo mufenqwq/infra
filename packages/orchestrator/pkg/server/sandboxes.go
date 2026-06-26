@@ -552,6 +552,8 @@ func (s *Server) Delete(ctxConn context.Context, in *orchestrator.SandboxDeleteR
 	eventData[executionEventDataKey] = s.getSandboxExecutionData(sbx)
 	addKillReason(eventData, killReason)
 	recordSandboxKill(ctx, s.sandboxKilledCounter, killReason)
+	s.sandboxDuration.Record(ctx, time.Since(sbx.GetStartedAt()).Milliseconds(),
+		metric.WithAttributes(attribute.String("kill_reason", killReason)))
 
 	eventType := events.SandboxKilledEventPair
 	go s.sbxEventsService.Publish(

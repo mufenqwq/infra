@@ -84,6 +84,7 @@ const (
 
 	// Sandbox timing histograms
 	OrchestratorSandboxCreateDurationName HistogramType = "orchestrator.sandbox.create.duration"
+	OrchestratorSandboxDurationName       HistogramType = "orchestrator.sandbox.duration"
 	WaitForEnvdDurationHistogramName      HistogramType = "orchestrator.sandbox.envd.init.duration"
 	GuestSyncDurationHistogramName        HistogramType = "orchestrator.sandbox.guest_sync.duration"
 
@@ -411,6 +412,7 @@ var histogramDesc = map[HistogramType]string{
 	BuildStepDurationHistogramName:        "Time taken to build each step of a template",
 	BuildRootfsSizeHistogramName:          "Size of the built template rootfs in bytes",
 	OrchestratorSandboxCreateDurationName: "Time taken to create a sandbox",
+	OrchestratorSandboxDurationName:       "Total lifetime of a sandbox, from creation until it is killed",
 	WaitForEnvdDurationHistogramName:      "Time taken for Envd to initialize successfully",
 	EnvdCollapseDurationHistogramName:     "Time taken for the pre-pause envd heap collapse round-trip",
 	GuestSyncDurationHistogramName:        "Time taken for the mandatory pre-pause guest sync (filesystem-only pause)",
@@ -458,6 +460,7 @@ var histogramUnits = map[HistogramType]string{
 	BuildStepDurationHistogramName:                "ms",
 	BuildRootfsSizeHistogramName:                  "{By}",
 	OrchestratorSandboxCreateDurationName:         "ms",
+	OrchestratorSandboxDurationName:               "ms",
 	WaitForEnvdDurationHistogramName:              "ms",
 	EnvdCollapseDurationHistogramName:             "ms",
 	GuestSyncDurationHistogramName:                "ms",
