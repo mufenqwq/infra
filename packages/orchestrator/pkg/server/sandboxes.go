@@ -552,8 +552,7 @@ func (s *Server) Delete(ctxConn context.Context, in *orchestrator.SandboxDeleteR
 	eventData[executionEventDataKey] = s.getSandboxExecutionData(sbx)
 	addKillReason(eventData, killReason)
 	recordSandboxKill(ctx, s.sandboxKilledCounter, killReason)
-	s.sandboxDuration.Record(ctx, time.Since(sbx.GetStartedAt()).Milliseconds(),
-		metric.WithAttributes(attribute.String("kill_reason", killReason)))
+	s.recordExecutionDuration(ctx, sbx, killReason)
 
 	eventType := events.SandboxKilledEventPair
 	go s.sbxEventsService.Publish(
@@ -594,6 +593,22 @@ func recordSandboxKill(ctx context.Context, counter metric.Int64Counter, killRea
 	}
 
 	counter.Add(ctx, 1, metric.WithAttributes(attribute.String("kill_reason", killReason)))
+}
+
+// endReasonPause labels execution-duration samples for executions that ended
+// because the sandbox was paused rather than killed.
+const endReasonPause = "pause"
+
+// recordExecutionDuration records the duration of a single sandbox execution
+// (start/resume until pause or kill) tagged with the reason the execution
+// ended. For kills this is the kill reason; for pauses it is endReasonPause.
+func (s *Server) recordExecutionDuration(ctx context.Context, sbx *sandbox.Sandbox, endReason string) {
+	if endReason == "" {
+		endReason = killReasonUnknown
+	}
+
+	s.sandboxExecutionDuration.Record(ctx, time.Since(sbx.GetStartedAt()).Milliseconds(),
+		metric.WithAttributes(attribute.String("end_reason", endReason)))
 }
 
 func (s *Server) Pause(ctx context.Context, in *orchestrator.SandboxPauseRequest) (*orchestrator.SandboxPauseResponse, error) {
@@ -652,6 +667,8 @@ func (s *Server) Pause(ctx context.Context, in *orchestrator.SandboxPauseRequest
 	}
 
 	s.uploadSnapshotAsync(ctx, sbx, res)
+
+	s.recordExecutionDuration(ctx, sbx, endReasonPause)
 
 	teamID, buildId, eventData := s.prepareSandboxEventData(ctx, sbx)
 	eventData[executionEventDataKey] = s.getSandboxExecutionData(sbx)
