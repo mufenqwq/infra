@@ -1,0 +1,21 @@
+packages/cube-envd/tests/golden/README.md
+  s_de7c101198f08e::t_4aa9d6890200bc 1-103
+packages/cube-envd/tests/golden/compare.sh
+  s_de7c101198f08e::t_149b7f67fc8c07 1-195
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "1d74bed27cf483c7863685fad91a40c84e8ffceb",
+  "prompts": {},
+  "sessions": {
+    "s_de7c101198f08e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d9773f81-0c8d-48f3-8557-3ff56b7ed40e",
+        "model": "claude-opus-4-8-thinking-high"
+      },
+      "human_author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    }
+  }
+}
