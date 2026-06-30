@@ -1,0 +1,25 @@
+packages/cube-envd/tests/rest_core.rs
+  s_5d28fdded7b0ef::t_8a4900f207e262 316-336
+  s_5d28fdded7b0ef::t_76e07c72fce84b 315
+packages/cube-envd/src/rest/mod.rs
+  s_5d28fdded7b0ef::t_5fa777478bd6d6 17-24
+packages/cube-envd/src/rest/files.rs
+  s_5d28fdded7b0ef::t_e265c37a69f119 24-28
+  s_5d28fdded7b0ef::t_7f3a4e972a5ec2 317-319,321,323-324
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "9569e302834b229984ac740d4f5e9ec1af00c8ff",
+  "prompts": {},
+  "sessions": {
+    "s_5d28fdded7b0ef": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "aec4978a-e4d6-40b2-980b-b56fc5efc6b5",
+        "model": "claude-opus-4-8-thinking-high"
+      },
+      "human_author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    }
+  }
+}
