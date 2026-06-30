@@ -1,0 +1,21 @@
+packages/cube-envd/src/main.rs
+  s_275d26ab202171::t_53e257225034d6 1
+packages/cube-envd/src/auth.rs
+  s_275d26ab202171::t_0da2472c10f1bd 1-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "832d90802015167570e92bd174515209a5c4bb6e",
+  "prompts": {},
+  "sessions": {
+    "s_275d26ab202171": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "e4d45ab3-a299-4a73-ad0e-f6658a07055c",
+        "model": "claude-opus-4-8-thinking-high"
+      },
+      "human_author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    }
+  }
+}
