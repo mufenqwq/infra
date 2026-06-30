@@ -1,0 +1,19 @@
+packages/cube-envd/src/filesystem/entry.rs
+  s_8a597868151d2b::t_92b6c65541e85b 4,9-14,16-33,35,38-42,49-53,60-117,142,144-147,154,157,161,166-167,177,179-182,184-214
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "9f63875180defd6119e8f1452989add23ee1ea35",
+  "prompts": {},
+  "sessions": {
+    "s_8a597868151d2b": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "5f4b8b2f-d42d-4429-81d9-665c5c64feb9",
+        "model": "claude-opus-4-8-thinking-high"
+      },
+      "human_author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    }
+  }
+}
