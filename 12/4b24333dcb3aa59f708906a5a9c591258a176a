@@ -1,0 +1,45 @@
+packages/cube-envd/src/auth.rs
+  s_c2e95425c27495::t_4c6d529070d6b2 14-17,22-24
+packages/cube-envd/src/connect/codec.rs
+  s_c2e95425c27495::t_918bdef535f08f 66-67,92-94,103-105,125-128
+packages/cube-envd/src/execctx.rs
+  s_c2e95425c27495::t_ee5522170e726a 127-130
+packages/cube-envd/src/filesystem/entry.rs
+  s_c2e95425c27495::t_aa005768bb402b 39-44,48-51,90-91,93,95-105,147-150,153-156,162-165,167-170,222-225,228-232,244-247
+packages/cube-envd/src/filesystem/service.rs
+  s_c2e95425c27495::t_13e2c0eebbc759 24-28,69-70,72-75,81-85,89-93,110-113,117-122,131-135,139-143,165-169,185-188,203-207,211-215,238-243,261-263
+packages/cube-envd/src/filesystem/watch.rs
+  s_c2e95425c27495::t_27b617fd291962 260-263,615-618
+packages/cube-envd/src/permissions.rs
+  s_c2e95425c27495::t_44d0f51b9577bc 22-29,40-42,55-57,73-77,83-85,94-99,105-108,114-117,123-126,132-135,148-151,157-160
+packages/cube-envd/src/proto.rs
+  s_c2e95425c27495::t_97339c99edebb1 16-18
+packages/cube-envd/src/rest/envs.rs
+  s_c2e95425c27495::t_bc11744928a4db 11-14
+packages/cube-envd/src/rest/files.rs
+  s_c2e95425c27495::t_37ea1b9cdd1ae6 44-48,71,174-177
+packages/cube-envd/src/rest/mod.rs
+  s_c2e95425c27495::t_6ddfd653e107fe 23-25
+packages/cube-envd/tests/filesystem_unary.rs
+  s_c2e95425c27495::t_89fdcb0b12e53b 63,200-204
+packages/cube-envd/tests/filesystem_watch.rs
+  s_c2e95425c27495::t_456447ace41ddf 60,181-182,184-189,194-197
+packages/cube-envd/tests/rest_core.rs
+  s_c2e95425c27495::t_30cb930f84ff59 124-127,221-226,252-255,301-303
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "124b24333dcb3aa59f708906a5a9c591258a176a",
+  "prompts": {},
+  "sessions": {
+    "s_c2e95425c27495": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d20b98a2-bd84-48c1-88b5-205c66206cae",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    }
+  }
+}
