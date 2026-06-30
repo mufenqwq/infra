@@ -1,0 +1,27 @@
+.gitignore
+  s_c2e95425c27495::t_b1d6aaae976a1c 22-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "b0ca03b33c73b320d79ebea6f09b3fec7ed660e3",
+  "prompts": {},
+  "humans": {
+    "h_16c0301eccc7ea": {
+      "author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    },
+    "h_e439e00d7bd593": {
+      "author": "mufenwang"
+    }
+  },
+  "sessions": {
+    "s_c2e95425c27495": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d20b98a2-bd84-48c1-88b5-205c66206cae",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    }
+  }
+}
