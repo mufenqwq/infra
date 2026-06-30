@@ -1,0 +1,19 @@
+.github/workflows/cube-envd-tests.yml
+  s_c2e95425c27495::t_7843bbeed137e1 1-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "04c905bb8252a53b5d18604db62d981ef1314bd0",
+  "prompts": {},
+  "sessions": {
+    "s_c2e95425c27495": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d20b98a2-bd84-48c1-88b5-205c66206cae",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    }
+  }
+}
