@@ -1,0 +1,22 @@
+packages/cube-envd/tests/filesystem_unary.rs
+  s_d6bf850dde6401::t_4ca58feb46b737 182-251
+packages/cube-envd/src/filesystem/service.rs
+  s_d6bf850dde6401::t_fb24cc48269c73 16
+  s_d6bf850dde6401::t_caffb65b12bf51 53-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "1f78fdedd9f121d552ceb6b782b483dc4c252477",
+  "prompts": {},
+  "sessions": {
+    "s_d6bf850dde6401": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "42543424-ec7e-4b68-b35e-8d2d8c5619b5",
+        "model": "claude-opus-4-8-thinking-high"
+      },
+      "human_author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    }
+  }
+}
