@@ -1,0 +1,23 @@
+packages/cube-envd/src/execctx.rs
+  s_64028bb36b5319::t_f774ee3c42446d 66-73
+packages/cube-envd/src/permissions.rs
+  s_64028bb36b5319::t_093a4c6ed8cbc8 33,35,37,39-45,48
+  s_64028bb36b5319::t_8bebd5f839af87 104-122
+  s_64028bb36b5319::t_c7f49915e066e7 54-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "0e7a9fba9b520f23c68a084066c98037a31edd53",
+  "prompts": {},
+  "sessions": {
+    "s_64028bb36b5319": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "dd373614-5529-4b0c-a11c-f3262ac5b615",
+        "model": "claude-opus-4-8-thinking-high"
+      },
+      "human_author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    }
+  }
+}
