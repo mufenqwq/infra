@@ -1,0 +1,21 @@
+docs/superpowers/plans/2026-06-30-cube-envd-plan-1-protocol-filesystem-rest.md
+  s_c2e95425c27495::t_19ca3a202172d8 1-2207
+docs/superpowers/specs/2026-06-30-cube-envd-design.md
+  s_c2e95425c27495::t_f7eb00034279f6 1-179
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "7350e47469f5d23ba70b2b8b53a418e09c7991fc",
+  "prompts": {},
+  "sessions": {
+    "s_c2e95425c27495": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d20b98a2-bd84-48c1-88b5-205c66206cae",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    }
+  }
+}
