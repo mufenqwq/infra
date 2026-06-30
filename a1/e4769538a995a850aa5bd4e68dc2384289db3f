@@ -1,0 +1,19 @@
+packages/cube-envd/src/proto.rs
+  s_e39c14d0d9cc24::t_4d2d679c84687b 1,5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "a1e4769538a995a850aa5bd4e68dc2384289db3f",
+  "prompts": {},
+  "sessions": {
+    "s_e39c14d0d9cc24": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a9d07513-ead5-43a6-98e5-ca5f51aef53a",
+        "model": "claude-opus-4-8-thinking-high"
+      },
+      "human_author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    }
+  }
+}
