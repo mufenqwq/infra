@@ -1,0 +1,22 @@
+packages/cube-envd/src/filesystem/service.rs
+  s_c2e95425c27495::t_a5a250ac183693 202,204-208
+packages/cube-envd/tests/filesystem_unary.rs
+  s_c2e95425c27495::t_c8cc62e124c5f5 183-206
+  s_c2e95425c27495::t_743b2617017a1f 182
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "323325a1ddd1241ed70ae2bfb7969f30e607fbbe",
+  "prompts": {},
+  "sessions": {
+    "s_c2e95425c27495": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d20b98a2-bd84-48c1-88b5-205c66206cae",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    }
+  }
+}
