@@ -1,0 +1,19 @@
+packages/envd/internal/services/process/handler/handler.go
+  s_094238c2987fcf::t_ba1ee5dfb08e18 575-578
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "011795db912fb7ebfb46a2c8658bdf925da35080",
+  "prompts": {},
+  "sessions": {
+    "s_094238c2987fcf": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "62da316c-dd7b-4b7b-90c1-811c6852ba22",
+        "model": "claude-opus-5"
+      },
+      "human_author": "wangpan910@gmail.com <wangpan910@gmail.com>"
+    }
+  }
+}
