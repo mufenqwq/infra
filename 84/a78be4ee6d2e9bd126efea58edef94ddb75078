@@ -1,0 +1,26 @@
+packages/envd/internal/services/process/service.go
+  s_450256efee76c0::t_f2b2eb1108d998 181,184-187,190
+packages/envd/internal/services/process/service_test.go
+  s_450256efee76c0::t_647b037c490e96 1-96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "84a78be4ee6d2e9bd126efea58edef94ddb75078",
+  "prompts": {},
+  "humans": {
+    "h_e439e00d7bd593": {
+      "author": "mufenwang"
+    }
+  },
+  "sessions": {
+    "s_450256efee76c0": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d7538ca9-5544-4eb4-b480-fe94eb046101",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "mufenwang"
+    }
+  }
+}
